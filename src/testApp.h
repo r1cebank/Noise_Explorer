@@ -37,7 +37,6 @@ class testApp : public ofBaseApp{
         //UI
         ofxUICanvas *gui1, *gui2;
         ofxUILabel *title, *title2, *stat, *zeroFound, *selectedPixel, *pixelLocation, *pixelValue;
-        ofxUILabelButton *up, *down, *left, *right;
         ofxUIIntSlider *slider;
 		//OpenCV
         ofxCvGrayscaleImage grayImage, previewImage, selectionImage;

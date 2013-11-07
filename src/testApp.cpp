@@ -35,14 +35,6 @@ void testApp::setupUI() {
     gui2->addWidgetDown(pixelLocation);
     gui2->addWidgetDown(pixelValue);
     gui2->addSpacer();
-    up = new ofxUILabelButton(44,false,"up");
-    down = new ofxUILabelButton(44,false,"down");
-    left = new ofxUILabelButton(44,false,"left");
-    right = new ofxUILabelButton(44,false,"right");
-    gui2->addWidgetDown(up);
-    gui2->addWidgetRight(down);
-    gui2->addWidgetRight(right);
-    gui2->addWidgetRight(left);
     slider = new ofxUIIntSlider("Bound Size", 1, 20, &boundSize, 170, 20);
     gui2->addWidgetDown(slider);
     ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
@@ -60,7 +52,7 @@ void testApp::countZero() {
 
 //--------------------------------------------------------------
 void testApp::update(){
-    
+    setValue();
 }
 
 void testApp::setValue() {
@@ -68,7 +60,8 @@ void testApp::setValue() {
     pixelValue->setLabel("Value: " + ofToString((int)grayImage.getPixels()[selectedY * 640 + selectedX]));
     grayImage.setROI(selectedX, selectedY, 1, 1);
     previewImage.setFromPixels(grayImage.getRoiPixelsRef());
-    grayImage.setROI(selectedX + 20 - boundSize, selectedY + 70 - boundSize, boundSize*2+1, boundSize*2+1);
+    grayImage.resetROI();
+    grayImage.setROI(selectedX - boundSize, selectedY - boundSize, boundSize*2+1, boundSize*2+1);
     selectionImage.setFromPixels(grayImage.getRoiPixelsRef());
 }
 
@@ -79,7 +72,7 @@ void testApp::draw(){
     ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
     previewImage.draw(680, 90, 100, 100);
     ofDrawBitmapStringHighlight(pixelValue->getLabel(), 680, 210, ofColor::seaGreen, ofColor::white);
-    selectionImage.draw(680, 220, 400, 400);
+    selectionImage.draw(680, 220, 300, 300);
     ofDrawBitmapStringHighlight("x: " + ofToString(mouseX) + " y: " + ofToString(mouseY), 20, 680, ofColor::seaGreen, ofColor::white);
     ofSetColor(ofColor::red);
     ofRect(selectedX + 20, selectedY + 70, 1, 1);
@@ -88,6 +81,8 @@ void testApp::draw(){
     ofDrawBitmapString("candidate", selectedX + 40, selectedY + 40);
     ofSetColor(ofColor::green);
     ofRect(selectedX + 20 - boundSize, selectedY + 70 - boundSize, boundSize*2+1, boundSize*2+1);
+    ofLine(selectedX - boundSize + 20, selectedY + boundSize + 70, selectedX - boundSize, selectedY + boundSize + 100);
+    ofDrawBitmapString("bounded pixels", selectedX - boundSize, selectedY + boundSize + 110);
     ofSetColor(ofColor::white);
 }
 
@@ -176,7 +171,7 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void testApp::exit(){
-    gui2->saveSettings("GUI/guiSettings_1.xml");
+    gui1->saveSettings("GUI/guiSettings_1.xml");
 	gui2->saveSettings("GUI/guiSettings_2.xml");
     delete gui1;
 	delete gui2;
@@ -184,31 +179,4 @@ void testApp::exit(){
 
 void testApp::guiEvent(ofxUIEventArgs &e){
     string widgetName = e.widget->getName();
-    if(((ofxUILabelButton*) e.widget)->getValue()) {
-        if(widgetName == "up") {
-            ofLogNotice() << "moving pixel up";
-            selectedY--;
-            if(selectedY < 0)
-                selectedY = 0;
-        }
-        if(widgetName == "down") {
-            ofLogNotice() << "moving pixel down";
-            selectedY++;
-            if(selectedY > 479)
-                selectedY = 479;
-        }
-        if(widgetName == "left") {
-            ofLogNotice() << "moving pixel left";
-            selectedX--;
-            if(selectedX < 0)
-                selectedX = 0;
-        }
-        if(widgetName == "right") {
-            ofLogNotice() << "moving pixel right";
-            selectedX++;
-            if(selectedX > 639)
-                selectedX = 639;
-        }
-        setValue();
-    }
 }
