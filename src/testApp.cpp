@@ -2,11 +2,13 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+    ofSetBackgroundColor(179, 242, 255);
     setupUI();
     ofSetLogLevel(OF_LOG_VERBOSE);
     decompressedImage = compressor.readDepthFrametoImage("capture/capture.raw");
     grayImage.allocate(640, 480);
-    previewImage.allocate(10,10);
+    previewImage.allocate(1,1);
+    selectionImage.allocate(400,400);
     grayImage.setFromPixels(decompressedImage.getPixelsRef());
     countZero();
     zeroFound->setLabel(ofToString(zeroCounter) + " zeros found.");
@@ -41,6 +43,8 @@ void testApp::setupUI() {
     gui2->addWidgetRight(down);
     gui2->addWidgetRight(right);
     gui2->addWidgetRight(left);
+    slider = new ofxUIIntSlider("Bound Size", 1, 20, &boundSize, 170, 20);
+    gui2->addWidgetDown(slider);
     ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
     gui1->loadSettings("GUI/guiSettings_1.xml");
 	gui2->loadSettings("GUI/guiSettings_2.xml");
@@ -62,17 +66,28 @@ void testApp::update(){
 void testApp::setValue() {
     pixelLocation->setLabel("(" + ofToString(selectedX) + ", " + ofToString(selectedY) + ")");
     pixelValue->setLabel("Value: " + ofToString((int)grayImage.getPixels()[selectedY * 640 + selectedX]));
-    //previewImage.
+    grayImage.setROI(selectedX, selectedY, 1, 1);
+    previewImage.setFromPixels(grayImage.getRoiPixelsRef());
+    grayImage.setROI(selectedX + 20 - boundSize, selectedY + 70 - boundSize, boundSize*2+1, boundSize*2+1);
+    selectionImage.setFromPixels(grayImage.getRoiPixelsRef());
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    ofNoFill();
     grayImage.draw(20, 70);
+    ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
+    previewImage.draw(680, 90, 100, 100);
+    ofDrawBitmapStringHighlight(pixelValue->getLabel(), 680, 210, ofColor::seaGreen, ofColor::white);
+    selectionImage.draw(680, 220, 400, 400);
     ofDrawBitmapStringHighlight("x: " + ofToString(mouseX) + " y: " + ofToString(mouseY), 20, 680, ofColor::seaGreen, ofColor::white);
     ofSetColor(ofColor::red);
     ofRect(selectedX + 20, selectedY + 70, 1, 1);
+    ofRect(680, 90, 100, 100);
     ofLine(selectedX + 20, selectedY + 70, selectedX + 40, selectedY + 40);
     ofDrawBitmapString("candidate", selectedX + 40, selectedY + 40);
+    ofSetColor(ofColor::green);
+    ofRect(selectedX + 20 - boundSize, selectedY + 70 - boundSize, boundSize*2+1, boundSize*2+1);
     ofSetColor(ofColor::white);
 }
 

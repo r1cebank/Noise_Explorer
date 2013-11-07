@@ -38,12 +38,14 @@ class testApp : public ofBaseApp{
         ofxUICanvas *gui1, *gui2;
         ofxUILabel *title, *title2, *stat, *zeroFound, *selectedPixel, *pixelLocation, *pixelValue;
         ofxUILabelButton *up, *down, *left, *right;
+        ofxUIIntSlider *slider;
 		//OpenCV
-        ofxCvGrayscaleImage grayImage, previewImage;
+        ofxCvGrayscaleImage grayImage, previewImage, selectionImage;
         //DepthImageCompressor
         ofxDepthImageCompressor compressor;
         //Misc Var
         ofImage decompressedImage;
         int zeroCounter;
         int selectedX, selectedY;
+        int boundSize;
 };
