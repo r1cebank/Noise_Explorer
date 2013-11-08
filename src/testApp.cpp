@@ -35,7 +35,7 @@ void testApp::setupUI() {
     gui2->addWidgetDown(pixelLocation);
     gui2->addWidgetDown(pixelValue);
     gui2->addSpacer();
-    slider = new ofxUIIntSlider("Bound Size", 1, 20, &boundSize, 170, 20);
+    slider = new ofxUIIntSlider("Bound Size", 1, 40, &boundSize, 170, 20);
     gui2->addWidgetDown(slider);
     ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
     gui1->loadSettings("GUI/guiSettings_1.xml");
@@ -43,6 +43,7 @@ void testApp::setupUI() {
 }
 
 void testApp::countZero() {
+	zeroCounter = 0;
     for(int i = 0; i< 640*480; i++) {
         if(grayImage.getPixels()[i] == 0) {
 			zeroCounter++;
@@ -63,27 +64,44 @@ void testApp::setValue() {
     grayImage.resetROI();
     grayImage.setROI(selectedX - boundSize, selectedY - boundSize, boundSize*2+1, boundSize*2+1);
     selectionImage.setFromPixels(grayImage.getRoiPixelsRef());
+	averageSelected = getAverageFromImage(selectionImage.getPixels(), pow(((boundSize*2) + 1), 2));
+}
+
+unsigned char testApp::getAverageFromImage(unsigned char* input, int size){
+	int totalValue = 0, nonZero = 0;
+	for(int i = 0; i < size; i++){
+		if(input[i] != 0){
+			totalValue += input[i];
+			nonZero++;
+		}
+	}
+	if(nonZero != 0)
+		return (unsigned char)(totalValue / nonZero);
+	else
+		return 0;
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofNoFill();
     grayImage.draw(20, 70);
     ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
+	ofDrawBitmapStringHighlight("Average Selected: " + ofToString((int)averageSelected), 680, 550, ofColor::seaGreen, ofColor::white);
     previewImage.draw(680, 90, 100, 100);
     ofDrawBitmapStringHighlight(pixelValue->getLabel(), 680, 210, ofColor::seaGreen, ofColor::white);
-    selectionImage.draw(680, 220, 300, 300);
+    selectionImage.draw(680, 220, 301, 301);
     ofDrawBitmapStringHighlight("x: " + ofToString(mouseX) + " y: " + ofToString(mouseY), 20, 680, ofColor::seaGreen, ofColor::white);
     ofSetColor(ofColor::red);
     ofRect(selectedX + 20, selectedY + 70, 1, 1);
+	ofNoFill();
     ofRect(680, 90, 100, 100);
-    ofLine(selectedX + 20, selectedY + 70, selectedX + 40, selectedY + 40);
-    ofDrawBitmapString("candidate", selectedX + 40, selectedY + 40);
+    ofLine(selectedX + 20, selectedY + 70, selectedX + 40 + boundSize, selectedY + 40 - boundSize);
+    ofDrawBitmapString("candidate", selectedX + 40 + boundSize, selectedY + 40 - boundSize);
     ofSetColor(ofColor::green);
     ofRect(selectedX + 20 - boundSize, selectedY + 70 - boundSize, boundSize*2+1, boundSize*2+1);
     ofLine(selectedX - boundSize + 20, selectedY + boundSize + 70, selectedX - boundSize, selectedY + boundSize + 100);
-    ofDrawBitmapString("bounded pixels", selectedX - boundSize, selectedY + boundSize + 110);
+    ofDrawBitmapString("bounded pixels", selectedX - boundSize - 120, selectedY + boundSize + 110);
     ofSetColor(ofColor::white);
+	ofFill();
 }
 
 //--------------------------------------------------------------

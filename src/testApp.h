@@ -33,6 +33,7 @@ class testApp : public ofBaseApp{
         void guiEvent(ofxUIEventArgs &e);
         void countZero();
         void setValue();
+		unsigned char getAverageFromImage(unsigned char* input, int size);
     
         //UI
         ofxUICanvas *gui1, *gui2;
@@ -47,4 +48,5 @@ class testApp : public ofBaseApp{
         int zeroCounter;
         int selectedX, selectedY;
         int boundSize;
+		unsigned char averageSelected;
 };
