@@ -10,9 +10,11 @@ void testApp::setup(){
     previewImage.allocate(1,1);
     selectionImage.allocate(400,400);
     grayImage.setFromPixels(decompressedImage.getPixelsRef());
+    filteredImage.setFromPixels(decompressedImage.getPixelsRef());
     countZero();
     zeroFound->setLabel(ofToString(zeroCounter) + " zeros found.");
     selectedX = selectedY = 100;
+    filterOn = false;
 }
 
 void testApp::setupUI() {
@@ -27,6 +29,7 @@ void testApp::setupUI() {
     selectedPixel = new ofxUILabel("Selected Pixel", OFX_UI_FONT_MEDIUM);
     pixelLocation = new ofxUILabel("Pixel Location", OFX_UI_FONT_SMALL);
     pixelValue = new ofxUILabel("Pixel Value", OFX_UI_FONT_SMALL);
+    showFiltered = new ofxUIToggle("Show Filtered", &filterOn, 15, 15);
     gui2->addWidgetDown(stat);
     gui2->addSpacer();
     gui2->addWidgetDown(zeroFound);
@@ -37,6 +40,7 @@ void testApp::setupUI() {
     gui2->addSpacer();
     slider = new ofxUIIntSlider("Bound Size", 1, 40, &boundSize, 170, 20);
     gui2->addWidgetDown(slider);
+    gui2->addWidgetDown(showFiltered);
     ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
     gui1->loadSettings("GUI/guiSettings_1.xml");
 	gui2->loadSettings("GUI/guiSettings_2.xml");
@@ -56,15 +60,48 @@ void testApp::update(){
     setValue();
 }
 
+void testApp::boxFilter(){
+    filteredImage.setFromPixels(grayImage.getPixelsRef());
+    unsigned char *original = grayImage.getPixels();
+    unsigned char *filtered = filteredImage.getPixels();
+    int filterX = 0, filterY = 0;
+    for(int i = 0; i < 640*480; i++){
+        if(original[i] == 0){
+            //Set ROI, get roi image, get average and update
+            //filtered[i] = 0;
+            filterY = i / 640;
+            filterX = i % 640;
+            filteredImage.resetROI();
+            filteredImage.setROI(filterX - boundSize, filterY - boundSize, boundSize*2+1, boundSize*2+1);
+            selectionImage.setFromPixels(grayImage.getRoiPixelsRef());
+            averageSelected = getAverageFromImage(selectionImage.getPixels(), pow((double)((boundSize * 2)+ 1), 2));
+            filtered[i] = averageSelected;
+        }
+            //Find the zeros in image and replace with the average.
+    }
+}
+
 void testApp::setValue() {
-    pixelLocation->setLabel("(" + ofToString(selectedX) + ", " + ofToString(selectedY) + ")");
-    pixelValue->setLabel("Value: " + ofToString((int)grayImage.getPixels()[selectedY * 640 + selectedX]));
-    grayImage.setROI(selectedX, selectedY, 1, 1);
-    previewImage.setFromPixels(grayImage.getRoiPixelsRef());
-    grayImage.resetROI();
-    grayImage.setROI(selectedX - boundSize, selectedY - boundSize, boundSize*2+1, boundSize*2+1);
-    selectionImage.setFromPixels(grayImage.getRoiPixelsRef());
-	averageSelected = getAverageFromImage(selectionImage.getPixels(), pow(((boundSize*2) + 1), 2));
+    if(filterOn){
+        pixelLocation->setLabel("(" + ofToString(selectedX) + ", " + ofToString(selectedY) + ")");
+        pixelValue->setLabel("Value: " + ofToString((int)filteredImage.getPixels()[selectedY * 640 + selectedX]));
+        filteredImage.setROI(selectedX, selectedY, 1, 1);
+        previewImage.setFromPixels(filteredImage.getRoiPixelsRef());
+        filteredImage.resetROI();
+        filteredImage.setROI(selectedX - boundSize, selectedY - boundSize, boundSize*2+1, boundSize*2+1);
+        selectionImage.setFromPixels(filteredImage.getRoiPixelsRef());
+        averageSelected = getAverageFromImage(selectionImage.getPixels(), pow((double)((boundSize * 2)+ 1), 2));
+    }
+    else{
+        pixelLocation->setLabel("(" + ofToString(selectedX) + ", " + ofToString(selectedY) + ")");
+        pixelValue->setLabel("Value: " + ofToString((int)grayImage.getPixels()[selectedY * 640 + selectedX]));
+        grayImage.setROI(selectedX, selectedY, 1, 1);
+        previewImage.setFromPixels(grayImage.getRoiPixelsRef());
+        grayImage.resetROI();
+        grayImage.setROI(selectedX - boundSize, selectedY - boundSize, boundSize*2+1, boundSize*2+1);
+        selectionImage.setFromPixels(grayImage.getRoiPixelsRef());
+        averageSelected = getAverageFromImage(selectionImage.getPixels(), pow((double)((boundSize * 2)+ 1), 2));
+    }
 }
 
 unsigned char testApp::getAverageFromImage(unsigned char* input, int size){
@@ -83,7 +120,10 @@ unsigned char testApp::getAverageFromImage(unsigned char* input, int size){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    grayImage.draw(20, 70);
+    if(!filterOn)
+        grayImage.draw(20, 70);
+    else
+        filteredImage.draw(20, 70);
     ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
 	ofDrawBitmapStringHighlight("Average Selected: " + ofToString((int)averageSelected), 680, 550, ofColor::seaGreen, ofColor::white);
     previewImage.draw(680, 90, 100, 100);
@@ -197,4 +237,14 @@ void testApp::exit(){
 
 void testApp::guiEvent(ofxUIEventArgs &e){
     string widgetName = e.widget->getName();
+    if(widgetName == "Show Filtered"){
+        if(showFiltered->getValue()){
+            switch(FILTER_MODE){
+                case 1:
+                    boxFilter();
+                    break;
+            }
+        }
+    }
+        
 }

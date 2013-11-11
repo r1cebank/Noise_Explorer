@@ -5,10 +5,13 @@
 #include "ofxOpenCv.h"
 #include "ofxDepthImageCompressor.h"
 
+
 #define WIDTH 1200
 #define HEIGHT 700
 #define CONTROL_WIDTH 200
 #define BANNER_HEIGHT 50
+
+#define FILTER_MODE 1
 
 class testApp : public ofBaseApp{
 
@@ -27,6 +30,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
+    
         //Misc Functions
         void setupUI();
         void exit();
@@ -34,13 +38,15 @@ class testApp : public ofBaseApp{
         void countZero();
         void setValue();
 		unsigned char getAverageFromImage(unsigned char* input, int size);
+        void boxFilter();
     
         //UI
         ofxUICanvas *gui1, *gui2;
         ofxUILabel *title, *title2, *stat, *zeroFound, *selectedPixel, *pixelLocation, *pixelValue;
         ofxUIIntSlider *slider;
+        ofxUIToggle *showFiltered;
 		//OpenCV
-        ofxCvGrayscaleImage grayImage, previewImage, selectionImage;
+        ofxCvGrayscaleImage grayImage, previewImage, selectionImage, filteredImage;
         //DepthImageCompressor
         ofxDepthImageCompressor compressor;
         //Misc Var
@@ -49,4 +55,5 @@ class testApp : public ofBaseApp{
         int selectedX, selectedY;
         int boundSize;
 		unsigned char averageSelected;
+        bool filterOn;
 };
