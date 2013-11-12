@@ -4,17 +4,19 @@
 void testApp::setup(){
     ofSetBackgroundColor(179, 242, 255);
     setupUI();
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    ofSetLogLevel(OF_LOG_SILENT);
     decompressedImage = compressor.readDepthFrametoImage("capture/capture.raw");
     grayImage.allocate(640, 480);
     previewImage.allocate(1,1);
     selectionImage.allocate(400,400);
+	filterPreview.allocate(boundSize*2+1, boundSize*2+1);
     grayImage.setFromPixels(decompressedImage.getPixelsRef());
     filteredImage.setFromPixels(decompressedImage.getPixelsRef());
     countZero();
     zeroFound->setLabel(ofToString(zeroCounter) + " zeros found.");
     selectedX = selectedY = 100;
     filterOn = false;
+
 }
 
 void testApp::setupUI() {
@@ -58,6 +60,7 @@ void testApp::countZero() {
 //--------------------------------------------------------------
 void testApp::update(){
     setValue();
+
 }
 
 void testApp::boxFilter(){
@@ -73,8 +76,8 @@ void testApp::boxFilter(){
             filterX = i % 640;
             filteredImage.resetROI();
             filteredImage.setROI(filterX - boundSize, filterY - boundSize, boundSize*2+1, boundSize*2+1);
-            selectionImage.setFromPixels(grayImage.getRoiPixelsRef());
-            averageSelected = getAverageFromImage(selectionImage.getPixels(), pow((double)((boundSize * 2)+ 1), 2));
+            filterPreview.setFromPixels(filteredImage.getRoiPixelsRef());
+            averageSelected = getAverageFromImage(filterPreview.getPixels(), pow((double)((boundSize * 2)+ 1), 2));
             filtered[i] = averageSelected;
         }
             //Find the zeros in image and replace with the average.
@@ -120,8 +123,9 @@ unsigned char testApp::getAverageFromImage(unsigned char* input, int size){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    if(!filterOn)
+    if(!filterOn){
         grayImage.draw(20, 70);
+	}
     else
         filteredImage.draw(20, 70);
     ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
@@ -241,7 +245,8 @@ void testApp::guiEvent(ofxUIEventArgs &e){
         if(showFiltered->getValue()){
             switch(FILTER_MODE){
                 case 1:
-                    boxFilter();
+					if(grayImage.getHeight() != 0)
+						boxFilter();
                     break;
             }
         }

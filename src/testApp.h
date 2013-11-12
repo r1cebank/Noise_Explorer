@@ -13,6 +13,7 @@
 
 #define FILTER_MODE 1
 
+
 class testApp : public ofBaseApp{
 
 	public:
@@ -46,7 +47,7 @@ class testApp : public ofBaseApp{
         ofxUIIntSlider *slider;
         ofxUIToggle *showFiltered;
 		//OpenCV
-        ofxCvGrayscaleImage grayImage, previewImage, selectionImage, filteredImage;
+        ofxCvGrayscaleImage grayImage, previewImage, selectionImage, filteredImage, filterPreview;
         //DepthImageCompressor
         ofxDepthImageCompressor compressor;
         //Misc Var

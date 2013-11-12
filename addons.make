@@ -1,3 +1,4 @@
 ofxOpenCv
 ofxXmlSettings
+ofxCv
 ofxUI
