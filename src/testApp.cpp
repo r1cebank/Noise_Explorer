@@ -1,5 +1,13 @@
 #include "testApp.h"
 
+/*
+	image pipeline
+	read image -> decompressedImage & grayImage (copy)
+	if filter on -> grayImage -> filter
+	if sharpen on -> grayImage -> sharpen
+
+*/
+
 //--------------------------------------------------------------
 void testApp::setup(){
     ofSetBackgroundColor(179, 242, 255);
@@ -80,8 +88,7 @@ void testApp::boxFilter(){
             filterX = i % 640;
             filteredImage.resetROI();
             filteredImage.setROI(filterX - boundSize, filterY - boundSize, boundSize*2+1, boundSize*2+1);
-            filterPreview.setFromPixels(filteredImage.getRoiPixelsRef());
-            averageSelected = getAverageFromImage(filterPreview.getPixels(), pow((double)((boundSize * 2)+ 1), 2));
+			averageSelected = getAverageFromImage(filteredImage.getRoiPixels(), pow((double)((boundSize * 2)+ 1), 2));
             filtered[i] = averageSelected;
         }
             //Find the zeros in image and replace with the average.
@@ -199,7 +206,7 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
     if((mouseX >= 20 && mouseY >= 70) && (mouseX < 20 + 640 && mouseY < 70 + 480)) {
-        ofLogNotice() << "Mouse Selected at Pixel";
+        //ofLogNotice() << "Mouse Selected at Pixel";
         selectedX = mouseX - 20;
         selectedY = mouseY - 70;
         setValue();
@@ -209,7 +216,7 @@ void testApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
     if((mouseX >= 20 && mouseY >= 70) && (mouseX < 20 + 640 && mouseY < 70 + 480)) {
-        ofLogNotice() << "Mouse Selected at Pixel";
+        //ofLogNotice() << "Mouse Selected at Pixel";
         selectedX = mouseX - 20;
         selectedY = mouseY - 70;
         setValue();
