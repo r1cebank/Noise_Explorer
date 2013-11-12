@@ -4,14 +4,16 @@
 void testApp::setup(){
     ofSetBackgroundColor(179, 242, 255);
     setupUI();
-    ofSetLogLevel(OF_LOG_SILENT);
+	ofSetLogLevel(OF_LOG_VERBOSE);
     decompressedImage = compressor.readDepthFrametoImage("capture/capture.raw");
     grayImage.allocate(640, 480);
     previewImage.allocate(1,1);
     selectionImage.allocate(400,400);
 	filterPreview.allocate(boundSize*2+1, boundSize*2+1);
+	sharpenedImage.allocate(640,480);
     grayImage.setFromPixels(decompressedImage.getPixelsRef());
     filteredImage.setFromPixels(decompressedImage.getPixelsRef());
+	sharpenedImage.setFromPixels(decompressedImage.getPixelsRef());
     countZero();
     zeroFound->setLabel(ofToString(zeroCounter) + " zeros found.");
     selectedX = selectedY = 100;
@@ -32,6 +34,7 @@ void testApp::setupUI() {
     pixelLocation = new ofxUILabel("Pixel Location", OFX_UI_FONT_SMALL);
     pixelValue = new ofxUILabel("Pixel Value", OFX_UI_FONT_SMALL);
     showFiltered = new ofxUIToggle("Show Filtered", &filterOn, 15, 15);
+	sharpen = new ofxUIToggle("Sharpen", &sharpenOn, 15, 15);
     gui2->addWidgetDown(stat);
     gui2->addSpacer();
     gui2->addWidgetDown(zeroFound);
@@ -43,6 +46,7 @@ void testApp::setupUI() {
     slider = new ofxUIIntSlider("Bound Size", 1, 40, &boundSize, 170, 20);
     gui2->addWidgetDown(slider);
     gui2->addWidgetDown(showFiltered);
+	gui2->addWidgetDown(sharpen);
     ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
     gui1->loadSettings("GUI/guiSettings_1.xml");
 	gui2->loadSettings("GUI/guiSettings_2.xml");
@@ -251,5 +255,17 @@ void testApp::guiEvent(ofxUIEventArgs &e){
             }
         }
     }
-        
+    if(widgetName == "Sharpen"){
+        if(sharpen->getValue()){
+			ofLogNotice() << "Sharpening...";
+			ofxCvGrayscaleImage temp;
+			temp.allocate(grayImage.getWidth(), grayImage.getHeight());
+			temp.setFromPixels(grayImage.getPixelsRef());
+			temp.blurGaussian();
+			ofRectangle tempROI = grayImage.getROI();
+			grayImage.resetROI();
+			grayImage.absDiff(temp);
+			grayImage.setROI(tempROI);
+        }
+    } 
 }

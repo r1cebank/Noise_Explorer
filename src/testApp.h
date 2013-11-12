@@ -45,9 +45,9 @@ class testApp : public ofBaseApp{
         ofxUICanvas *gui1, *gui2;
         ofxUILabel *title, *title2, *stat, *zeroFound, *selectedPixel, *pixelLocation, *pixelValue;
         ofxUIIntSlider *slider;
-        ofxUIToggle *showFiltered;
+        ofxUIToggle *showFiltered, *sharpen;
 		//OpenCV
-        ofxCvGrayscaleImage grayImage, previewImage, selectionImage, filteredImage, filterPreview;
+        ofxCvGrayscaleImage grayImage, previewImage, selectionImage, filteredImage, filterPreview, sharpenedImage;
         //DepthImageCompressor
         ofxDepthImageCompressor compressor;
         //Misc Var
@@ -56,5 +56,5 @@ class testApp : public ofBaseApp{
         int selectedX, selectedY;
         int boundSize;
 		unsigned char averageSelected;
-        bool filterOn;
+        bool filterOn, sharpenOn;
 };
