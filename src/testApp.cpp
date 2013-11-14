@@ -25,8 +25,8 @@ void testApp::setup(){
     countZero();
     zeroFound->setLabel(ofToString(zeroCounter) + " zeros found.");
     selectedX = selectedY = 100;
-    filterOn = false;
-
+    /*filterOn = sharpenOn = contourOn = findHoles = useApprox = false;
+	minArea = maxArea = nConsidered = 0;*/
 }
 
 void testApp::setupUI() {
@@ -51,13 +51,28 @@ void testApp::setupUI() {
     gui2->addWidgetDown(pixelLocation);
     gui2->addWidgetDown(pixelValue);
     gui2->addSpacer();
-    slider = new ofxUIIntSlider("Bound Size", 1, 40, &boundSize, 170, 20);
-    gui2->addWidgetDown(slider);
+    boundSlider = new ofxUIIntSlider("Bound Size", 1, 40, &boundSize, 170, 20);
+	sharpenBlurSlider = new ofxUIIntSlider("Sharpen Blur", 1, 40, &sharpenBlurSize, 170, 20);
+	showContour = new ofxUIToggle("Show Contour", &contourOn, 15, 15);
     gui2->addWidgetDown(showFiltered);
+	gui2->addWidgetDown(boundSlider);
 	gui2->addWidgetDown(sharpen);
-    ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
-    gui1->loadSettings("GUI/guiSettings_1.xml");
-	gui2->loadSettings("GUI/guiSettings_2.xml");
+	gui2->addWidgetDown(sharpenBlurSlider);
+	//Contour Finder Here
+	gui2->addWidgetDown(showContour);
+	minAreaSlider = new ofxUIIntSlider("Min Area", 1, 100, &minArea, 170, 20);
+	maxAreaSlider = new ofxUIIntSlider("Max Area", 1, 640*480, &maxArea, 170, 20);
+	nConsideredSlider = new ofxUIIntSlider("nConsidered", 1, 100, &nConsidered, 170, 20);
+	findHolesToggle = new ofxUIToggle("Find Holes", &findHoles, 15, 15);
+	useApproxToggle = new ofxUIToggle("Use Approximation", &useApprox, 15, 15);
+	gui2->addWidgetDown(minAreaSlider);
+	gui2->addWidgetDown(maxAreaSlider);
+	gui2->addWidgetDown(nConsideredSlider);
+	gui2->addWidgetDown(findHolesToggle);
+	gui2->addWidgetDown(useApproxToggle);
+	gui2->addFPS();
+	gui2->loadSettings("settings.xml");
+	ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
 }
 
 void testApp::countZero() {
@@ -72,7 +87,27 @@ void testApp::countZero() {
 //--------------------------------------------------------------
 void testApp::update(){
     setValue();
+	if(contourOn){
+		//ofLogNotice() << "Finding Contours";
+		ofRectangle tempROI = filteredImage.getROI();
+		filteredImage.resetROI();
+		contourFinder.findContours(filteredImage, minArea, maxArea, nConsidered, findHoles, useApprox);
+		filteredImage.setROI(tempROI);
+	}
+}
 
+void testApp::drawContours(){
+	if(contourOn){
+		contourFinder.draw(20, 70, 640, 480);
+		ofColor c(255, 0, 0);
+		for(int i = 0; i < contourFinder.nBlobs; i++) {
+			ofRectangle r = contourFinder.blobs.at(i).boundingRect;
+			r.x += 20; r.y += 70;
+			c.setHsb(i * 64, 255, 255);
+			ofSetColor(c);
+			ofRect(r);
+		}
+	}
 }
 
 void testApp::boxFilter(){
@@ -132,6 +167,20 @@ unsigned char testApp::getAverageFromImage(unsigned char* input, int size){
 		return 0;
 }
 
+unsigned char testApp::getPredictedValue(unsigned char* input, int size){
+	int totalValue = 0, nonZero = 0;
+	for(int i = 0; i < size; i++){
+		if(input[i] != 0){
+			totalValue += input[i];
+			nonZero++;
+		}
+	}
+	if(nonZero != 0)
+		return (unsigned char)(totalValue / nonZero);
+	else
+		return 0;
+}
+
 //--------------------------------------------------------------
 void testApp::draw(){
     if(!filterOn){
@@ -139,6 +188,8 @@ void testApp::draw(){
 	}
     else
         filteredImage.draw(20, 70);
+	if(contourOn)
+		drawContours();
     ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
 	ofDrawBitmapStringHighlight("Average Selected: " + ofToString((int)averageSelected), 680, 550, ofColor::seaGreen, ofColor::white);
     previewImage.draw(680, 90, 100, 100);
@@ -244,10 +295,26 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void testApp::exit(){
-    gui1->saveSettings("GUI/guiSettings_1.xml");
-	gui2->saveSettings("GUI/guiSettings_2.xml");
+	gui2->saveSettings("settings.xml");
     delete gui1;
 	delete gui2;
+}
+
+void testApp::sharpenImage(bool state){
+	if(state){
+		sharpenBackup.setFromPixels(filteredImage.getPixels(), filteredImage.width, filteredImage.height);
+		ofLogNotice() << "Sharpening...";
+		ofxCvGrayscaleImage temp;
+		temp.allocate(filteredImage.getWidth(), filteredImage.getHeight());
+		temp.setFromPixels(filteredImage.getPixelsRef());
+		temp.blurGaussian(sharpenBlurSize);
+		ofRectangle tempROI = filteredImage.getROI();
+		filteredImage.resetROI();
+		filteredImage.absDiff(temp);
+		filteredImage.setROI(tempROI);
+	} else {
+		filteredImage.setFromPixels(sharpenBackup.getPixels(), sharpenBackup.width, sharpenBackup.height);
+	}
 }
 
 void testApp::guiEvent(ofxUIEventArgs &e){
@@ -263,16 +330,10 @@ void testApp::guiEvent(ofxUIEventArgs &e){
         }
     }
     if(widgetName == "Sharpen"){
-        if(sharpen->getValue()){
-			ofLogNotice() << "Sharpening...";
-			ofxCvGrayscaleImage temp;
-			temp.allocate(grayImage.getWidth(), grayImage.getHeight());
-			temp.setFromPixels(grayImage.getPixelsRef());
-			temp.blurGaussian();
-			ofRectangle tempROI = grayImage.getROI();
-			grayImage.resetROI();
-			grayImage.absDiff(temp);
-			grayImage.setROI(tempROI);
-        }
+        sharpenImage(sharpen->getValue());
     } 
+	if(widgetName == "Sharpen Blur"){
+		sharpenImage(false);
+        sharpenImage(sharpen->getValue());
+    }
 }
