@@ -90,8 +90,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="RangeTree.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\RangeTree.cpp" />
     <ClCompile Include="src\testApp.cpp" />
     <ClCompile Include="src\ofxDepthImageCompressor.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp" />
@@ -119,7 +119,7 @@
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RangeTree.h" />
+    <ClInclude Include="src\RangeTree.h" />
     <ClInclude Include="src\testApp.h" />
     <ClInclude Include="src\ofxDepthImageCompressor.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />

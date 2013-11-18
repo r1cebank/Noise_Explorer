@@ -85,7 +85,9 @@
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp">
       <Filter>addons\ofxCv\libs\ofxCv\src</Filter>
     </ClCompile>
-    <ClCompile Include="RangeTree.cpp" />
+    <ClCompile Include="src\RangeTree.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -687,7 +689,9 @@
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUIWidgetWithLabel.h">
       <Filter>addons\ofxUI\src</Filter>
     </ClInclude>
-    <ClInclude Include="RangeTree.h" />
+    <ClInclude Include="src\RangeTree.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
