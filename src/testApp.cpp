@@ -159,7 +159,7 @@ void testApp::setValue() {
 
 unsigned char testApp::getAverageFromImage(unsigned char* input, int size){
 	int totalValue = 0, nonZero = 0;
-	for(int i = 0; i < size; i++){
+	for(int i = 0; i < size; i+=4){
 		if(input[i] != 0){
 			totalValue += input[i];
 			nonZero++;
