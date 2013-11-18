@@ -72,6 +72,7 @@ void testApp::setupUI() {
 	gui2->addWidgetDown(useApproxToggle);
 	gui2->addFPS();
 	gui2->loadSettings("settings.xml");
+	filterOn = sharpenOn = contourOn = false;
 	ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
 }
 
@@ -115,6 +116,7 @@ void testApp::boxFilter(){
     unsigned char *original = grayImage.getPixels();
     unsigned char *filtered = filteredImage.getPixels();
     int filterX = 0, filterY = 0;
+	long long start = ofGetElapsedTimeMillis();
     for(int i = 0; i < 640*480; i++){
         if(original[i] == 0){
             //Set ROI, get roi image, get average and update
@@ -124,10 +126,12 @@ void testApp::boxFilter(){
             filteredImage.resetROI();
             filteredImage.setROI(filterX - boundSize, filterY - boundSize, boundSize*2+1, boundSize*2+1);
 			averageSelected = getAverageFromImage(filteredImage.getRoiPixels(), pow((double)((boundSize * 2)+ 1), 2));
-            filtered[i] = averageSelected;
+			filtered[i] = averageSelected;
         }
             //Find the zeros in image and replace with the average.
     }
+	long long end = ofGetElapsedTimeMillis();
+	ofLogNotice() << "Elapsed time: " << end-start << "ms";
 }
 
 void testApp::setValue() {
