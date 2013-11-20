@@ -41,6 +41,7 @@ class testApp : public ofBaseApp{
 		unsigned char getAverageFromImage(unsigned char* input, int size);
 		unsigned char getPredictedValue(unsigned char* input, int size);
 		void sharpenImage(bool state);
+		void invertImage(bool state);
         void boxFilter();
 		void drawContours();
     
@@ -48,9 +49,10 @@ class testApp : public ofBaseApp{
         ofxUICanvas *gui1, *gui2;
         ofxUILabel *title, *title2, *stat, *zeroFound, *selectedPixel, *pixelLocation, *pixelValue;
         ofxUIIntSlider *boundSlider, *sharpenBlurSlider, *minAreaSlider, *maxAreaSlider, *nConsideredSlider;
-        ofxUIToggle *showFiltered, *sharpen, *showContour, *findHolesToggle, *useApproxToggle;
+        ofxUIToggle *showFiltered, *sharpen, *showContour, *findHolesToggle, *useApproxToggle, *useInvert;
 		//OpenCV
         ofxCvGrayscaleImage grayImage, previewImage, selectionImage, filteredImage, filterPreview, sharpenedImage, sharpenBackup;
+		ofxCvGrayscaleImage invertBackup;
 		ofxCvContourFinder contourFinder;
 		//DepthImageCompressor
         ofxDepthImageCompressor compressor;
@@ -62,5 +64,5 @@ class testApp : public ofBaseApp{
 		int minArea, maxArea, nConsidered;
 		bool findHoles, useApprox;
 		unsigned char averageSelected;
-        bool filterOn, sharpenOn, contourOn;
+        bool filterOn, sharpenOn, contourOn, invertOn;
 };

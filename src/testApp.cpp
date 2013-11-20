@@ -27,6 +27,7 @@ void testApp::setup(){
     selectedX = selectedY = 100;
     /*filterOn = sharpenOn = contourOn = findHoles = useApprox = false;
 	minArea = maxArea = nConsidered = 0;*/
+	ofSeedRandom(ofGetElapsedTimef());
 }
 
 void testApp::setupUI() {
@@ -60,7 +61,7 @@ void testApp::setupUI() {
 	gui2->addWidgetDown(sharpenBlurSlider);
 	//Contour Finder Here
 	gui2->addWidgetDown(showContour);
-	minAreaSlider = new ofxUIIntSlider("Min Area", 1, 100, &minArea, 170, 20);
+	minAreaSlider = new ofxUIIntSlider("Min Area", 1, 640*480, &minArea, 170, 20);
 	maxAreaSlider = new ofxUIIntSlider("Max Area", 1, 640*480, &maxArea, 170, 20);
 	nConsideredSlider = new ofxUIIntSlider("nConsidered", 1, 100, &nConsidered, 170, 20);
 	findHolesToggle = new ofxUIToggle("Find Holes", &findHoles, 15, 15);
@@ -70,9 +71,12 @@ void testApp::setupUI() {
 	gui2->addWidgetDown(nConsideredSlider);
 	gui2->addWidgetDown(findHolesToggle);
 	gui2->addWidgetDown(useApproxToggle);
+	gui2->addSpacer();
+	useInvert = new ofxUIToggle("Invert", &invertOn, 15, 15);
+	gui2->addWidgetDown(useInvert);
 	gui2->addFPS();
 	gui2->loadSettings("settings.xml");
-	filterOn = sharpenOn = contourOn = false;
+	filterOn = sharpenOn = contourOn = invertOn = false;
 	ofAddListener(gui2->newGUIEvent, this, &testApp::guiEvent);
 }
 
@@ -159,10 +163,11 @@ void testApp::setValue() {
 
 unsigned char testApp::getAverageFromImage(unsigned char* input, int size){
 	int totalValue = 0, nonZero = 0;
-	for(int i = 0; i < size; i+=4){
+	for(int i = 0; i < size; i++){
 		if(input[i] != 0){
-			totalValue += input[i];
-			nonZero++;
+				totalValue += input[i];
+				nonZero++;
+				break;
 		}
 	}
 	if(nonZero != 0)
@@ -187,7 +192,7 @@ unsigned char testApp::getPredictedValue(unsigned char* input, int size){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    if(!filterOn){
+    if(!filterOn && !sharpenOn){
         grayImage.draw(20, 70);
 	}
     else
@@ -304,6 +309,15 @@ void testApp::exit(){
 	delete gui2;
 }
 
+void testApp::invertImage(bool state){
+	if(state){
+		invertBackup.setFromPixels(filteredImage.getPixels(), filteredImage.width, filteredImage.height);
+		filteredImage.invert();
+	} else {
+		filteredImage.setFromPixels(invertBackup.getPixels(), invertBackup.width, invertBackup.height);
+	}
+}
+
 void testApp::sharpenImage(bool state){
 	if(state){
 		sharpenBackup.setFromPixels(filteredImage.getPixels(), filteredImage.width, filteredImage.height);
@@ -335,6 +349,9 @@ void testApp::guiEvent(ofxUIEventArgs &e){
     }
     if(widgetName == "Sharpen"){
         sharpenImage(sharpen->getValue());
+    } 
+	if(widgetName == "Invert"){
+        invertImage(useInvert->getValue());
     } 
 	if(widgetName == "Sharpen Blur"){
 		sharpenImage(false);
