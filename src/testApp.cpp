@@ -102,16 +102,35 @@ void testApp::update(){
 }
 
 void testApp::drawContours(){
+	float x, y, area, length, width, height;
+	float realX, realY;
+	ofPoint centroid;
+	ofxCvBlob blob;
 	ofNoFill();
 	if(contourOn){
 		contourFinder.draw(20, 70, 640, 480);
 		ofColor c(255, 0, 0);
 		for(int i = 0; i < contourFinder.nBlobs; i++) {
-			ofRectangle r = contourFinder.blobs.at(i).boundingRect;
+			//Setting useful variables
+			blob = contourFinder.blobs.at(i);
+			ofRectangle r = blob.boundingRect;
+			x = r.x; y = r.y; width = r.width; height = r.height; centroid = blob.centroid; area = blob.area;
+			length = blob.length; //Messy no return multiline
+
+			//Drawing rectangle
 			r.x += 20; r.y += 70;
 			c.setHsb(i * 64, 255, 255);
 			ofSetColor(c);
 			ofRect(r);
+			//Drawing point
+			ofCircle(centroid.x + 20, centroid.y + 70, 4);
+
+			//Drawing informations
+			realX = x + 20;
+			realY = y + 70;
+			ofDrawBitmapString("x:" + ofToString(x) + " y:" + ofToString(y), realX, realY - 11);
+			ofDrawBitmapString("width:" + ofToString(width) + " height:" + ofToString(height), realX, realY - 11*2);
+			ofDrawBitmapString("area:" + ofToString(area) + " length:" + ofToString(length), realX, realY - 11*3);
 		}
 	}
 	ofFill();
@@ -314,8 +333,11 @@ void testApp::exit(){
 
 void testApp::invertImage(bool state){
 	if(state){
+		ofRectangle tempROI = filteredImage.getROI();
 		invertBackup.setFromPixels(filteredImage.getPixels(), filteredImage.width, filteredImage.height);
+		filteredImage.resetROI();
 		filteredImage.invert();
+		filteredImage.setROI(tempROI);
 	} else {
 		filteredImage.setFromPixels(invertBackup.getPixels(), invertBackup.width, invertBackup.height);
 	}
