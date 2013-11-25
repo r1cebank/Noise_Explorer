@@ -88,6 +88,9 @@
     <ClCompile Include="src\RangeTree.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ThreadFilter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -690,6 +693,9 @@
       <Filter>addons\ofxUI\src</Filter>
     </ClInclude>
     <ClInclude Include="src\RangeTree.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThreadFilter.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
