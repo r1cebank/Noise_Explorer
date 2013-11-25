@@ -1,0 +1,12 @@
+Noisy Depth Image:
+
+Found that when the depth image is really noisy, sharp function will not properly highlight the surface/object
+
+When the noise cancelling is introduced and blur for sharp is turned on, it is solved.
+
+
+nConsidered:
+
+When the image consists a huge density of just a few depth values, maybe shouldn't set nConsidered that high.
+
+TODO: need to count the depth pixel distribution for proper detection

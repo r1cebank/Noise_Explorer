@@ -13,7 +13,7 @@ void testApp::setup(){
     ofSetBackgroundColor(179, 242, 255);
     setupUI();
 	ofSetLogLevel(OF_LOG_VERBOSE);
-    decompressedImage = compressor.readDepthFrametoImage("capture/capture.raw");
+    decompressedImage = compressor.readDepthFrametoImage("capture/1.raw");
     grayImage.allocate(640, 480);
     previewImage.allocate(1,1);
     selectionImage.allocate(400,400);
