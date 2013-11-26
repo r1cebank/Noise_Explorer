@@ -15,7 +15,7 @@ public:
 	DepthBucket(void);
 	DepthBucket(int,int);
 	~DepthBucket(void);
-	stringstream printBucket();
+	ofstream printBucket();
 	int addDepthPixel(unsigned char, int);
 	ofxCvColorImage getColoredImage();
 	void done();

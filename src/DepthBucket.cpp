@@ -29,15 +29,17 @@ int DepthBucket::addDepthPixel(unsigned char pixel, int pixelPosition)
 	b[pixelPosition] = (unsigned char) colors[intValue].b;
 }
 
-stringstream DepthBucket::printBucket()
+ofstream DepthBucket::printBucket()
 {
 	finish = true;
-	stringstream str;
+	ofstream str;
 	cout << "<Printing Bucket>" << endl;
+	str.open ("data\\distribution.csv");
 	for (int i = start; i < end; i++)
 	{
-		cout << "<" << i << ">" << ": " << bucket[i] << endl; 
+		str << i << "," << bucket[i] << endl; 
 	}
+	str.close();
 	return str;
 }
 void DepthBucket::init()
