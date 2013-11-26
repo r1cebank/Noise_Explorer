@@ -10,6 +10,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	ofSeedRandom(ofGetElapsedTimef());
 	bucket = new DepthBucket(0, 255);
     ofSetBackgroundColor(179, 242, 255);
     setupUI();
@@ -28,7 +29,6 @@ void testApp::setup(){
     selectedX = selectedY = 100;
     /*filterOn = sharpenOn = contourOn = findHoles = useApprox = false;
 	minArea = maxArea = nConsidered = 0;*/
-	ofSeedRandom(ofGetElapsedTimef());
 }
 
 void testApp::setupUI() {
@@ -84,7 +84,7 @@ void testApp::setupUI() {
 void testApp::countZero() {
 	zeroCounter = 0;
     for(int i = 0; i< 640*480; i++) {
-		bucket->addDepthPixel(grayImage.getPixels()[i]);
+		bucket->addDepthPixel(grayImage.getPixels()[i], i);
         if(grayImage.getPixels()[i] == 0) {
 			zeroCounter++;
 		}
@@ -222,6 +222,8 @@ void testApp::draw(){
 	}
     else
         filteredImage.draw(20, 70);
+	if(bucket->getStatus())
+		bucket->getColoredImage().draw(20, 70);
 	if(contourOn)
 		drawContours();
     ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
