@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\DepthBucket.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RangeTree.cpp" />
     <ClCompile Include="src\testApp.cpp" />
@@ -120,6 +121,7 @@
     <ClCompile Include="src\ThreadFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\DepthBucket.h" />
     <ClInclude Include="src\RangeTree.h" />
     <ClInclude Include="src\testApp.h" />
     <ClInclude Include="src\ofxDepthImageCompressor.h" />

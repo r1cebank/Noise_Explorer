@@ -91,6 +91,9 @@
     <ClCompile Include="src\ThreadFilter.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\DepthBucket.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -696,6 +699,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ThreadFilter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DepthBucket.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

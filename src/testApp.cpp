@@ -10,6 +10,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	bucket = new DepthBucket(0, 255);
     ofSetBackgroundColor(179, 242, 255);
     setupUI();
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -22,7 +23,7 @@ void testApp::setup(){
     grayImage.setFromPixels(decompressedImage.getPixelsRef());
     filteredImage.setFromPixels(decompressedImage.getPixelsRef());
 	sharpenedImage.setFromPixels(decompressedImage.getPixelsRef());
-    countZero();
+	countZero();
     zeroFound->setLabel(ofToString(zeroCounter) + " zeros found.");
     selectedX = selectedY = 100;
     /*filterOn = sharpenOn = contourOn = findHoles = useApprox = false;
@@ -83,10 +84,12 @@ void testApp::setupUI() {
 void testApp::countZero() {
 	zeroCounter = 0;
     for(int i = 0; i< 640*480; i++) {
+		bucket->addDepthPixel(grayImage.getPixels()[i]);
         if(grayImage.getPixels()[i] == 0) {
 			zeroCounter++;
 		}
     }
+	bucket->printBucket();
 }
 
 //--------------------------------------------------------------

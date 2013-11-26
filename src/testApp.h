@@ -4,6 +4,7 @@
 #include "ofxUI.h"
 #include "ofxOpenCv.h"
 #include "ofxDepthImageCompressor.h"
+#include "DepthBucket.h"
 
 
 #define WIDTH 1200
@@ -65,4 +66,7 @@ class testApp : public ofBaseApp{
 		bool findHoles, useApprox;
 		unsigned char averageSelected;
         bool filterOn, sharpenOn, contourOn, invertOn;
+
+		//Depth Bucket
+		DepthBucket *bucket;
 };
