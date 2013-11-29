@@ -94,6 +94,9 @@
     <ClCompile Include="src\DepthBucket.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\MeshLoader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -702,6 +705,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\DepthBucket.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MeshLoader.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
