@@ -12,6 +12,7 @@
 void testApp::setup(){
 	ofSeedRandom(ofGetElapsedTimef());
 	bucket = new DepthBucket(1, 255);
+	meshLoader = new MeshLoader("capture/1.kmesh");
     ofSetBackgroundColor(179, 242, 255);
     setupUI();
 	ofSetLogLevel(OF_LOG_VERBOSE);
@@ -217,6 +218,7 @@ unsigned char testApp::getPredictedValue(unsigned char* input, int size){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	meshLoader->getMesh().drawFaces();
     if(!filterOn && !sharpenOn){
         grayImage.draw(20, 70);
 	}

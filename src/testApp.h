@@ -5,7 +5,7 @@
 #include "ofxOpenCv.h"
 #include "ofxDepthImageCompressor.h"
 #include "DepthBucket.h"
-
+#include "MeshLoader.h"
 
 #define WIDTH 1200
 #define HEIGHT 700
@@ -69,4 +69,7 @@ class testApp : public ofBaseApp{
 
 		//Depth Bucket
 		DepthBucket *bucket;
+
+		//Mesh Loader
+		MeshLoader *meshLoader;
 };
