@@ -135,6 +135,7 @@ void testApp::drawContours(){
 			ofDrawBitmapString("x:" + ofToString(x) + " y:" + ofToString(y), realX, realY - 11);
 			ofDrawBitmapString("width:" + ofToString(width) + " height:" + ofToString(height), realX, realY - 11*2);
 			ofDrawBitmapString("area:" + ofToString(area) + " length:" + ofToString(length), realX, realY - 11*3);
+			ofDrawBitmapString("tracking ID: ", realX, realY - 11*3); //Tracking ID is set from average distance of object and max and min dev
 		}
 	}
 	ofFill();
@@ -224,8 +225,8 @@ void testApp::draw(){
 	}
     else
         filteredImage.draw(20, 70);
-	if(bucket->getStatus())
-		bucket->getColoredImage().draw(20, 70);
+	//if(bucket->getStatus())
+		//bucket->getColoredImage().draw(20, 70);
 	if(contourOn)
 		drawContours();
     ofDrawBitmapStringHighlight("Preview", 680, 80, ofColor::seaGreen, ofColor::white);
