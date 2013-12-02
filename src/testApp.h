@@ -45,6 +45,7 @@ class testApp : public ofBaseApp{
 		void invertImage(bool state);
         void boxFilter();
 		void drawContours();
+		void setAvgDev(double &average, unsigned char &maxDev); 
     
         //UI
         ofxUICanvas *gui1, *gui2;
@@ -53,6 +54,7 @@ class testApp : public ofBaseApp{
         ofxUIToggle *showFiltered, *sharpen, *showContour, *findHolesToggle, *useApproxToggle, *useInvert;
 		//OpenCV
         ofxCvGrayscaleImage grayImage, previewImage, selectionImage, filteredImage, filterPreview, sharpenedImage, sharpenBackup;
+		ofxCvGrayscaleImage contourImage;
 		ofxCvGrayscaleImage invertBackup;
 		ofxCvContourFinder contourFinder;
 		//DepthImageCompressor
