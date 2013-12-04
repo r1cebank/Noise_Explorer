@@ -6,6 +6,7 @@
 #include "ofxDepthImageCompressor.h"
 #include "DepthBucket.h"
 #include "MeshLoader.h"
+#include "ThreadContour.h"
 
 #define WIDTH 1200
 #define HEIGHT 700
@@ -74,4 +75,7 @@ class testApp : public ofBaseApp{
 
 		//Mesh Loader
 		MeshLoader *meshLoader;
+
+		//Thread
+		ThreadContour *thread;
 };
