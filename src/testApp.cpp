@@ -30,13 +30,6 @@ void testApp::setup(){
     selectedX = selectedY = 100;
     /*filterOn = sharpenOn = contourOn = findHoles = useApprox = false;
 	minArea = maxArea = nConsidered = 0;*/
-	thread = new ThreadContour(&contourFinder);
-	thread->grayImage = filteredImage;
-	thread->maxArea = &maxArea;
-	thread->minArea = &minArea;
-	thread->nConsidered = &nConsidered;
-	thread->findHoles = &findHoles;
-	thread->useApprox = &useApprox;
 }
 
 void testApp::setupUI() {
@@ -102,27 +95,17 @@ void testApp::countZero() {
 
 //--------------------------------------------------------------
 void testApp::update(){
-    long long start = 0, end = 0;
-	setValue();
+    setValue();
 	if(contourOn){
-		start = ofGetElapsedTimeMillis();
 		//ofLogNotice() << "Finding Contours";
-		////////////Adding Thread//////////////
-		/*ofRectangle tempROI = filteredImage.getROI();
+		ofRectangle tempROI = filteredImage.getROI();
 		filteredImage.resetROI();
 		contourFinder.findContours(filteredImage, minArea, maxArea, nConsidered, findHoles, useApprox);
-		filteredImage.setROI(tempROI);*/
-		thread->lock();
-		thread->grayImage.setFromPixels(filteredImage.getPixelsRef());
-		thread->unlock();
-
-		end = ofGetElapsedTimeMillis();
-		ofLogNotice() << "Time elapsed for finding: " << nConsidered << " contours is: " << ofToString(end-start);
+		filteredImage.setROI(tempROI);
 	}
 }
 
 void testApp::drawContours(){
-	long long start = 0, end = 0;
 	float x, y, area, length, width, height;
 	float realX, realY;
 	ofPoint centroid;
@@ -132,7 +115,6 @@ void testApp::drawContours(){
 	unsigned char maxDev;
 	ofNoFill();
 	if(contourOn){
-		start = ofGetElapsedTimeMillis();
 		contourFinder.draw(20, 70, 640, 480);
 		ofColor c(255, 0, 0);
 		for(int i = 0; i < contourFinder.nBlobs; i++) {
@@ -170,12 +152,10 @@ void testApp::drawContours(){
 			ofDrawBitmapString("area:" + ofToString(area) + " length:" + ofToString(length), realX, realY - 11*3);
 			ofDrawBitmapString("tracking ID: " + trackingID, realX, realY - 11*4); //Tracking ID is set from average distance area max/mindev center to centroiddev
 			//231#12312#1#2#-1#1
-			end = ofGetElapsedTimeMillis();
 		}
 	}
 	ofFill();
 	ofSetColor(ofColor::white);
-	ofLogNotice() << "Time elapsed for drawing: " << nConsidered << " contours is: " << ofToString(end-start);
 }
 
 void testApp::setAvgDev(double &average, unsigned char &maxDev)
@@ -393,7 +373,6 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 
 void testApp::exit(){
 	gui2->saveSettings("settings.xml");
-	thread->stopThread();
     delete gui1;
 	delete gui2;
 }
@@ -449,10 +428,4 @@ void testApp::guiEvent(ofxUIEventArgs &e){
 		sharpenImage(false);
         sharpenImage(sharpen->getValue());
     }
-	if(widgetName == "Show Contour"){
-		if(contourOn)
-			thread->startThread(true, false);
-		else
-			thread->stopThread();
-	}
 }

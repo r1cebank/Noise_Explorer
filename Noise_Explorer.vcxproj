@@ -119,7 +119,7 @@
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Tracker.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Utilities.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
-    <ClCompile Include="src\ThreadContour.cpp" />
+    <ClCompile Include="src\ThreadFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DepthBucket.h" />
@@ -285,7 +285,7 @@
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUIWaveform.h" />
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUIWidget.h" />
     <ClInclude Include="..\..\..\addons\ofxUI\src\ofxUIWidgetWithLabel.h" />
-    <ClInclude Include="src\ThreadContour.h" />
+    <ClInclude Include="src\ThreadFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">

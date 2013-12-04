@@ -88,13 +88,13 @@
     <ClCompile Include="src\RangeTree.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ThreadFilter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\DepthBucket.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\MeshLoader.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ThreadContour.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -701,13 +701,13 @@
     <ClInclude Include="src\RangeTree.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\ThreadFilter.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\DepthBucket.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\MeshLoader.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ThreadContour.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
